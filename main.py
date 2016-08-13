@@ -27,7 +27,7 @@ class Greetings(ndb.Model):
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write("""
+        html = """
         <html>
         <head></head>
         <body>
@@ -42,11 +42,21 @@ class MainHandler(webapp2.RequestHandler):
             <p>
                 <input type ="submit" value= "Send">
             </p>
-        </form>
-        </body>
-        </html>
+        </form>"""
 
-        """)
+        results = Greetings.query().order(Greetings.timestamp).fetch
+        print results
+
+        # for result in results:
+            # assert isinstance(result.message, object)
+            # html += result.timestamp.strftime('%Y-%m-%d %H:%m') + " - " + result.name + "said" + result.message + "<br>"
+
+        html += " "
+
+        html += """
+        </body>
+        </html>"""
+        self.response.write(html)
 
 
 class GreetHandler(webapp2.RequestHandler):
@@ -55,6 +65,7 @@ class GreetHandler(webapp2.RequestHandler):
         message = self.request.get('message')
         print(user_name, message)
         Greetings(name=user_name, message=message).put()
+        self.redirect('/')
 
 
 app = webapp2.WSGIApplication([
